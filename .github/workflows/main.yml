@@ -51,6 +51,7 @@ jobs:
 
       - name: Update Assets in Gardendless
         run: |
+          mkdir -p gardendless/assets
           mv game.zip gardendless/assets/game.zip
 
       - name: Extract Version/Commit
