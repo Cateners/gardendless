@@ -35,14 +35,14 @@ class _MyAppState extends State<MyApp> {
     String gameDirPath = '${appDocDir.path}/game';
 
     // 检查是否已经解压并且没有正在解压的标志文件存在。
-    if (!await File('$gameDirPath/0.2.8.txt').exists()) {
+    if (!await File('$gameDirPath/complete.txt').exists()) {
       await Directory(gameDirPath).create(recursive: true);
 
       // 解压游戏文件到指定目录。
       await _unzipGame(appDocDir, gameDirPath);
 
       // 创建完成标志文件以避免重复解压。
-      await File('$gameDirPath/0.2.8.txt').writeAsString('done');
+      await File('$gameDirPath/complete.txt').writeAsString('done');
     }
 
     serverUrl = 'http://localhost:8080/index.html';
