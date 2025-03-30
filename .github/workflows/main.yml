@@ -1,0 +1,111 @@
+name: Gardendless Auto Build
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天UTC 0点运行
+  workflow_dispatch:      # 允许手动触发
+
+jobs:
+  process-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Gardendless
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          path: gardendless
+
+      - name: Get Test_pvz2 Latest Commit
+        id: get-test-pvz2-commit
+        run: |
+          COMMIT_SHA=$(curl -s https://api.github.com/repos/Gzh0821/test_pvz2/commits/main | jq -r '.sha')
+          echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
+
+      - name: Check Last Processed Commit
+        id: check-commit
+        run: |
+          if [ -f "gardendless/assets/last_commit.txt" ]; then
+            LAST_COMMIT=$(cat gardendless/assets/last_commit.txt)
+            if [ "$LAST_COMMIT" == "${{ steps.get-test-pvz2-commit.outputs.commit_sha }}" ]; then
+              echo "No new commit, exiting."
+              exit 1
+            fi
+          fi
+          echo "Proceeding with new commit."
+
+      - name: Clone Test_pvz2
+        uses: actions/checkout@v4
+        with:
+          repository: Gzh0821/test_pvz2
+          path: test_pvz2
+
+      - name: Insert touchPatch.js into index.html
+        run: |
+          cp gardendless/touchPatch.js test_pvz2/docs/
+          sed -i '/<\/body>/i <script src="touchPatch.js"><\/script>' test_pvz2/docs/index.html
+
+      - name: Create game.zip
+        run: |
+          cd test_pvz2/docs
+          zip -r ../../game.zip ./*
+
+      - name: Update Assets in Gardendless
+        run: |
+          mv game.zip gardendless/assets/game.zip
+
+      - name: Extract Version/Commit
+        id: extract-version
+        run: |
+          cd test_pvz2
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          VERSION=$(echo "$COMMIT_MSG" | grep -oP 'version \K\d+\.\d+\.\d+')
+          if [ -z "$VERSION" ]; then
+            VERSION=$(git rev-parse HEAD)
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Modify main.dart
+        run: |
+          REPLACE="${{ steps.extract-version.outputs.version }}"
+          sed -i "s/complete\.txt/${REPLACE}.txt/g" gardendless/lib/main.dart
+
+      - name: Update pubspec.yaml Version
+        run: |
+          VERSION="${{ steps.extract-version.outputs.version }}"
+          if [[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            sed -i "s/^version: .*/version: $VERSION/" gardendless/pubspec.yaml
+          fi
+
+      - name: Commit Changes
+        run: |
+          cd gardendless
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add pubspec.yaml
+          git commit -m "Auto update to ${{ steps.extract-version.outputs.version }}"
+          git push
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Build APK
+        run: |
+          cd gardendless
+          flutter pub get
+          flutter build apk --release
+
+      - name: Upload APK Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: gardendless/build/app/outputs/flutter-apk/app-release.apk
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Update Last Commit
+        run: |
+          echo "${{ steps.get-test-pvz2-commit.outputs.commit_sha }}" > gardendless/assets/last_commit.txt
+          cd gardendless
+          git add assets/last_commit.txt
+          git commit -m "Update last processed commit"
+          git push

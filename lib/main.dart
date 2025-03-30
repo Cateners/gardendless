@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:archive/archive.dart';
 import 'package:mime/mime.dart';
 import 'package:flutter/services.dart'
     show SystemChrome, SystemUiMode, rootBundle;
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 
@@ -34,14 +35,14 @@ class _MyAppState extends State<MyApp> {
     String gameDirPath = '${appDocDir.path}/game';
 
     // 检查是否已经解压并且没有正在解压的标志文件存在。
-    if (!await File('$gameDirPath/complete014.txt').exists()) {
+    if (!await File('$gameDirPath/complete.txt').exists()) {
       await Directory(gameDirPath).create(recursive: true);
 
       // 解压游戏文件到指定目录。
       await _unzipGame(appDocDir, gameDirPath);
 
       // 创建完成标志文件以避免重复解压。
-      await File('$gameDirPath/complete014.txt').writeAsString('done');
+      await File('$gameDirPath/complete.txt').writeAsString('done');
     }
 
     serverUrl = 'http://localhost:8080/index.html';
@@ -61,9 +62,10 @@ class _MyAppState extends State<MyApp> {
     final buffer = byteData.buffer.asUint8List();
 
     // 写入 zip 文件到本地目录
-    File('${appDocDir.path}/game.zip').writeAsBytesSync(buffer);
+    final zipFile = File('${appDocDir.path}/game.zip');
+    await zipFile.writeAsBytes(buffer);
 
-    final bytes = await File('${appDocDir.path}/game.zip').readAsBytes();
+    final bytes = await zipFile.readAsBytes();
 
     final archive = ZipDecoder().decodeBytes(bytes);
 
@@ -79,8 +81,13 @@ class _MyAppState extends State<MyApp> {
         await Directory(filename).create(recursive: true);
       }
     }
+
+    // 删除 game.zip 文件
+    await zipFile.delete();
+
     return;
   }
+
 
   Response _serveFiles(Request request, String gameDir) {
     final path = request.url.toString();
@@ -89,7 +96,10 @@ class _MyAppState extends State<MyApp> {
     final file = File(filePath);
     if (file.existsSync()) {
       return Response.ok(file.openRead(),
-          headers: {'Content-Type': _getContentType(path)});
+        headers: {'Content-Type': _getContentType(path),
+          HttpHeaders.cacheControlHeader: 'public, max-age=31536000', // 设置为1年（365天）
+          HttpHeaders.expiresHeader: DateTime.now().add(const Duration(days: 365)).toUtc().toString(),
+        });
     } else {
       return Response.notFound('File not found');
     }
@@ -108,9 +118,29 @@ class _MyAppState extends State<MyApp> {
         overlays: []);
     return serverUrl == null
         ? const Center(child: CircularProgressIndicator())
-        : WebViewWidget(
-            controller: WebViewController()
-              ..setJavaScriptMode(JavaScriptMode.unrestricted)
-              ..loadRequest(Uri.parse(serverUrl!)));
+        : InAppWebView(
+        initialUrlRequest: URLRequest(url: WebUri(serverUrl!)),
+        initialSettings: InAppWebViewSettings(
+          useOnDownloadStart: true
+        ),
+        onDownloadStartRequest: (controller, url) async {
+          String urlToLaunch = url.url.toString();
+          if (urlToLaunch.startsWith("data")) {
+            final uri = Uri.parse(urlToLaunch);
+
+            final parts = uri.path.split(',');
+            final data = Uri.decodeComponent(parts.sublist(1).join(","));
+
+            Directory appDocDir = await getApplicationDocumentsDirectory();
+            String savePath = '${appDocDir.path}/game/pp.json';
+            File(savePath)
+            ..createSync(recursive: true)
+            ..writeAsStringSync(data);
+
+            urlToLaunch = "http://localhost:8080/pp.json";
+          }
+          launchUrl(Uri.parse(urlToLaunch));
+        },
+      );
   }
 }
