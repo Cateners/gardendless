@@ -121,3 +121,11 @@ jobs:
           name: "Build ${{ env.TAG_NAME }}"
           body: "Auto-generated release for version ${{ env.TAG_NAME }}"
           token: ${{ secrets.GH_TOKEN }}
+
+      - name: Update Last Commit
+        run: |
+          echo "${{ steps.get-test-pvz2-commit.outputs.commit_sha }}" > gardendless/assets/last_commit.txt
+          cd gardendless
+          git add assets/last_commit.txt
+          git commit -m "Update last processed commit"
+          git push
