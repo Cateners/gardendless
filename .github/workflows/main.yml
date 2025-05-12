@@ -18,7 +18,7 @@ jobs:
       - name: Get Test_pvz2 Latest Commit
         id: get-test-pvz2-commit
         run: |
-          COMMIT_SHA=$(curl -s https://api.github.com/repos/Gzh0821/test_pvz2/commits/main | jq -r '.sha')
+          COMMIT_SHA=$(curl -s https://api.github.com/repos/Gzh0821/test_pvz2/commits/master | jq -r '.sha')
           echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
 
       - name: Check Last Processed Commit
