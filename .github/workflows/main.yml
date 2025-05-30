@@ -18,7 +18,7 @@ jobs:
       - name: Get Test_pvz2 Latest Commit
         id: get-test-pvz2-commit
         run: |
-          COMMIT_SHA=$(curl -s https://api.github.com/repos/Gzh0821/test_pvz2/commits/master | jq -r '.sha')
+          COMMIT_SHA=$(curl -s https://api.github.com/repos/Gzh0821/pvzge_web/commits/master | jq -r '.sha')
           echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
 
       - name: Check Last Processed Commit
@@ -36,17 +36,17 @@ jobs:
       - name: Clone Test_pvz2
         uses: actions/checkout@v4
         with:
-          repository: Gzh0821/test_pvz2
-          path: test_pvz2
+          repository: Gzh0821/pvzge_web
+          path: pvzge_web
 
       - name: Insert touchPatch.js into index.html
         run: |
-          cp gardendless/touchPatch.js test_pvz2/docs/
-          sed -i '/<\/body>/i <script src="touchPatch.js"><\/script>' test_pvz2/docs/index.html
+          cp gardendless/touchPatch.js pvzge_web/docs/
+          sed -i '/<\/body>/i <script src="touchPatch.js"><\/script>' pvzge_web/docs/index.html
 
       - name: Create game.zip
         run: |
-          cd test_pvz2/docs
+          cd pvzge_web/docs
           zip -r ../../game.zip ./*
 
       - name: Update Assets in Gardendless
@@ -57,7 +57,7 @@ jobs:
       - name: Extract Version/Commit
         id: extract-version
         run: |
-          cd test_pvz2
+          cd pvzge_web
           COMMIT_MSG=$(git log -1 --pretty=%B)
           VERSION=$(echo "$COMMIT_MSG" | grep -oP 'version \K\d+\.\d+\.\d+')
           if [ -z "$VERSION" ]; then

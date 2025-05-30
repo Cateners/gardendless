@@ -4,7 +4,7 @@
 
 受限于手机内存，可能出现关卡闪退、音乐或音效加载失败等问题。实测8GB内存可游玩埃及关卡，12GB内存音效丢失情况缓解，推测16GB内存可正常游玩。
 
-要编译，首先把[web版本](https://github.com/Gzh0821/test_pvz2)游戏本体(位于docs)添加补丁(touchPatch.js)后打包并重命名为game.zip，然后扔到assets文件夹。
+要编译，首先把[web版本](https://github.com/Gzh0821/pvzge_web)游戏本体(位于docs)添加补丁(touchPatch.js)后打包并重命名为game.zip，然后扔到assets文件夹。
 
 接下来正常编译即可。
 
