@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   path_provider: ^2.1.5
-  archive: ^4.0.4
+  archive: ^4.0.7
   flutter_inappwebview: ^6.1.5
   url_launcher: ^6.3.1
   mime: ^2.0.0
