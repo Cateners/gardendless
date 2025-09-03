@@ -2,11 +2,27 @@
 
 实际上，就是给web版本加上简单的触摸转鼠标事件代码并打了个包，并非完美的移植。
 
-受限于手机内存，可能出现关卡闪退、音乐或音效加载失败等问题。实测8GB内存可游玩埃及关卡，12GB内存音效丢失情况缓解，推测16GB内存可正常游玩。
+受限于手机内存，可能出现关卡闪退、音乐或音效加载失败等问题。实测在0.3版本时，8GB内存可游玩埃及关卡，12GB内存音效丢失情况缓解，推测16GB内存可正常游玩。
 
 要编译，首先把[web版本](https://github.com/Gzh0821/pvzge_web)游戏本体(位于docs)添加补丁(touchPatch.js)后打包并重命名为game.zip，然后扔到assets文件夹。
 
 接下来正常编译即可。
+
+# PVZ2 Gardendless Android Port
+
+Actually, it's just the web version with simple touch-to-mouse event code added and packaged—not a perfect port.
+
+Due to limitations in mobile device memory, issues such as level crashes or failure to load music/sound effects may occur. Testing in version 0.3 showed that devices with 8GB of memory can run the Egypt levels, while 12GB of memory alleviates sound effect loss. It is estimated that 16GB of memory would allow for normal gameplay.
+
+To compile, first add the patch (touchPatch.js) to the game files (located in docs) from the [web version](https://github.com/Gzh0821/pvzge_web), then package and rename it as game.zip, and place it in the assets folder.
+
+After that, proceed with normal compilation.
+
+## 签名
+
+签名已暴露在仓库中（keystore.jks），这意味着任何人都可以编译一份覆盖当前版本的安装包。为了安全请仅从此处下载。
+
+The signature has been exposed in the repository (keystore.jks), which means anyone can compile an installation package that could overwrite the currently installed version. For security reasons, please download only from this source.
 
 ## 自动化编译
 
