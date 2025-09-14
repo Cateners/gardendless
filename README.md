@@ -2,7 +2,9 @@
 
 实际上，就是给web版本加上简单的触摸转鼠标事件代码并打了个包，并非完美的移植。
 
-受限于手机内存，可能出现关卡闪退、音乐或音效加载失败等问题。实测在0.3版本时，8GB内存可游玩埃及关卡，12GB内存音效丢失情况缓解，推测16GB内存可正常游玩。
+手指点击等同于鼠标单击，手指划动等同于鼠标拖拽，两只手指划动等同于鼠标滚轮。游戏里大部分界面都可以直接划动，“设置”界面应该是唯一需要使用滚轮的地方（0.4.2版本）。另外网页版似乎默认开启了作弊，可以在设置界面关闭。
+
+受限于手机内存，可能出现关卡闪退、音乐或音效加载失败等问题。实测在0.3版本时，8GB内存可游玩埃及关卡，12GB内存音效丢失情况缓解，推测16GB内存可正常游玩。这和官网对[系统和环境的要求](https://pvzge.com/guide/requirement.html)基本一致，即最低12GB内存，推荐16GB内存。
 
 要编译，首先把[web版本](https://github.com/Gzh0821/pvzge_web)游戏本体(位于docs)添加补丁(touchPatch.js)后打包并重命名为game.zip，然后扔到assets文件夹。
 
@@ -12,7 +14,9 @@
 
 Actually, it's just the web version with simple touch-to-mouse event code added and packaged—not a perfect port.
 
-Due to limitations in mobile device memory, issues such as level crashes or failure to load music/sound effects may occur. Testing in version 0.3 showed that devices with 8GB of memory can run the Egypt levels, while 12GB of memory alleviates sound effect loss. It is estimated that 16GB of memory would allow for normal gameplay.
+A finger tap is equivalent to a mouse click, a finger swipe is equivalent to a mouse drag, and a two-finger swipe is equivalent to a mouse wheel. Most interfaces in the game can be directly swiped, and the "Settings" interface is likely the only place where the mouse wheel is needed (version 0.4.2). Additionally, the web version seems to have cheats enabled by default, which can be turned off in the settings interface.
+
+Due to limitations in mobile device memory, issues such as level crashes or failure to load music/sound effects may occur. Testing in version 0.3 showed that devices with 8GB of memory can run the Egypt levels, while 12GB of memory alleviates sound effect loss. It is estimated that 16GB of memory would allow for normal gameplay. This is largely consistent with the [system requirements](https://pvzge.com/en/guide/requirement.html) stated on the official website, which specify a minimum of 12GB RAM and recommend 16GB RAM.
 
 To compile, first add the patch (touchPatch.js) to the game files (located in docs) from the [web version](https://github.com/Gzh0821/pvzge_web), then package and rename it as game.zip, and place it in the assets folder.
 
