@@ -1,4 +1,4 @@
-function createEvent(event, type) {
+function createEvent(event, type, button) {
     let touches = event.changedTouches,
         first = touches[0];
     return new MouseEvent(type, {
@@ -14,7 +14,7 @@ function createEvent(event, type) {
         altKey: false,
         shiftKey: false,
         metaKey: false,
-        button: 0, // 0 表示左键
+        button: button || 0,
         relatedTarget: null
     });
 }
@@ -23,6 +23,18 @@ let delay_time = 16;
 let lastY = null;
 
 document.addEventListener("touchstart", (event) => {
+    if (event.touches.length === 3) {
+        const touch1 = event.touches[0];
+        const touch2 = event.touches[1];
+        const touch3 = event.touches[2];
+        setTimeout(() => {
+            event.changedTouches[0].target.dispatchEvent(createEvent(event, "mousedown", 2));
+        }, delay_time);
+        setTimeout(() => {
+            event.changedTouches[0].target.dispatchEvent(createEvent(event, "mouseup", 2));
+        }, delay_time * 2);
+    }
+    
     if (event.touches.length === 2) {
         const touch1 = event.touches[0];
         const touch2 = event.touches[1];
