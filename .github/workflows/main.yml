@@ -18,7 +18,20 @@ jobs:
       - name: Get Test_pvz2 Latest Commit
         id: get-test-pvz2-commit
         run: |
+          # 获取提交SHA
           COMMIT_SHA=$(curl -s https://api.github.com/repos/Gzh0821/pvzge_web/commits/master | jq -r '.sha')
+          
+          # 检查是否成功获取
+          if [ -z "$COMMIT_SHA" ] || [ "$COMMIT_SHA" == "null" ]; then
+            echo "❌ 错误：无法获取最新的提交哈希"
+            echo "请检查："
+            echo "1. 仓库地址是否正确：Gzh0821/pvzge_web"
+            echo "2. master分支是否存在"
+            echo "3. GitHub API访问是否正常"
+            exit 1  # 非零退出码表示失败
+          fi
+          
+          echo "✅ 成功获取提交哈希: ${COMMIT_SHA:0:8}..."
           echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
 
       - name: Check Last Processed Commit
