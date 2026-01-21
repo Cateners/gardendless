@@ -1,3 +1,19 @@
+我一共有三个 Gardendless 移植仓库。
+
+- [gardendless](https://github.com/Cateners/gardendless)。 最初的移植，使用 Flutter， flutter_inappwebview 和 shelf_io。
+- [gardendless-android](https://github.com/Cateners/gardendless-android)。 使用 Kotlin， WebView 和 WebViewAssetLoader，免除 Flutter 引擎和 HTTP 服务器的资源占用，性能更好。
+- [gardendless-gecko](https://github.com/Cateners/gardendless-gecko)。 使用 Kotlin， GeckoView 和 io.ktor.server，避免部分设备 WebView 加载不了游戏。
+
+此仓库仍然可用，但已不会积极维护。你可以在进入游戏后点击用户名导出存档。
+
+I have a total of three Gardendless port repositories.
+
+- [gardendless](https://github.com/Cateners/gardendless). The original port, using Flutter, flutter_inappwebview, and shelf_io.
+- [gardendless-android](https://github.com/Cateners/gardendless-android). Uses Kotlin, WebView, and WebViewAssetLoader; it eliminates the resource overhead of the Flutter engine and HTTP server for better performance.
+- [gardendless-gecko](https://github.com/Cateners/gardendless-gecko). Uses Kotlin, GeckoView, and io.ktor.server to prevent the game from failing to load on certain devices' WebViews.
+
+The repository remains available but is no longer actively maintained. You can export your save file by clicking on the username after entering the game.
+
 # PVZ2 Gardendless安卓移植
 
 实际上，就是给web版本加上简单的触摸转鼠标事件代码并打了个包，并非完美的移植。
